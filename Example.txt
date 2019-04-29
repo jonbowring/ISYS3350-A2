@@ -5,3 +5,7 @@ Ticket {
 Main {
 	/* This is an example file */
 }
+
+Report {
+	/* Report data goes here */
+}

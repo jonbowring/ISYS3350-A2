@@ -1,3 +1,7 @@
+Ticket {
+	/* Ticket object goes here */
+}
+
 Main {
 	/* This is an example file */
 }

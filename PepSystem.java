@@ -50,7 +50,145 @@ public class PepSystem {
 	      }
 	  }
 	  
-	  private class User {
+	  public class Pass {
+			
+		  /*
+			 * #############################################
+			 * Properties
+			 * #############################################
+			 * */
+		  
+		  private String id, duration, zone;
+			private HashMap<String, Double> costs;
+			
+			/*
+			 * #############################################
+			 * Constructors
+			 * #############################################
+			 * */
+			
+			public Pass(String duration, String zone) {
+				
+				// Initialise the costs array
+				costs = new HashMap<String, Double>();
+				
+				// Add initial values to the costs array
+				this.costs.put("2 hour:zone 1",3.5);
+				this.costs.put("2 hour:zones 1 & 2",6.0);
+				this.costs.put("All day:zone 1",7.0);
+				this.costs.put("All day:zones 1 & 2",12.0);
+				
+				this.id = UUID.randomUUID().toString();
+				this.duration = duration;
+				this.zone = zone;
+			}
+
+			/*
+			 * #############################################
+			 * Get methods
+			 * #############################################
+			 * */
+			
+			public String getId() {
+				return this.id;
+			}
+			
+			public String getDuration() {
+				return this.duration;
+			}
+			
+			public String getZone() {
+				return this.zone;
+			}
+			
+			public Double getCost() {
+				return this.costs.get(this.duration + ":" + this.zone);
+			}
+			
+			/*
+			 * #############################################
+			 * Set methods
+			 * #############################################
+			 * */
+			
+			public void setId(String id) {
+				this.id = id;
+			}
+			
+			public void setDuration(String duration) {
+				this.duration = duration;
+			}
+			
+			public void setZone(String zone) {
+				this.zone = zone;
+			}
+			
+			
+		}
+	  
+	  public class Transaction {
+			
+	  /*
+		 * #############################################
+		 * Properties
+		 * #############################################
+		 * */
+	  
+		private String id;
+		private Date createdAt;
+		private Pass pass;
+		
+		/*
+		 * #############################################
+		 * Constructors
+		 * #############################################
+		 * */
+		
+		public Transaction(String duration, String zone) {
+			this.id = UUID.randomUUID().toString();
+			this.createdAt = new Date();
+			this.pass = new Pass(duration, zone);
+		}
+		
+		/*
+		 * #############################################
+		 * Get methods
+		 * #############################################
+		 * */
+		
+		public String getId() {
+			return this.id;
+		}
+		
+		public Date getCreatedAt() {
+			return this.createdAt;
+		}
+		
+		public Pass getPass() {
+			return this.pass;
+		}
+		
+		/*
+		 * #############################################
+		 * Set methods
+		 * #############################################
+		 * */
+		
+		public void setId(String id) {
+			this.id = id;
+		}
+		
+		public void setCreatedAt(Date createdAt) {
+			this.createdAt = createdAt;
+		}
+		
+		public void setPass(Pass pass) {
+			this.pass = pass;
+		}
+		
+	}
+	  
+	  public class User {
 			
 			/*
 			 * #############################################

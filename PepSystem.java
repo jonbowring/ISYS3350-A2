@@ -279,7 +279,7 @@ final class Ticket {
 	private String id;
 	private float credit;
 //	private Transaction history;
-//	private User user;
+  	private User user;
 	
 	/*
 	 * #############################################
@@ -291,7 +291,7 @@ final class Ticket {
 	  this.id = id;
 	  this.credit = credit;
 //	  this.history = history;
-//	  this.user = user;
+  	  this.user = user;
 	}
 	
 	
@@ -309,6 +309,7 @@ final class Ticket {
 			return false;
 		} else {
 			return true;
+
 		}
 	}
 	
@@ -358,8 +359,10 @@ public class PepSystem {
 	  {
 	    // Variable declaration
 		HashMap<String, User> users = new HashMap<String, User>();
+
 		Ticket_JB testTicket;
 		Ticket ticket;
+
 		
 		/*
 		 * SHOULD WE HAVE A LOGIN SCREEN THAT GETS THE RELEVANT USER?
@@ -368,11 +371,13 @@ public class PepSystem {
 		// Initialise test
 		// TODO delete test initialisation
 		users.put("jbowring@informatica.com", new User("jbowring@informatica.com", "Jonathon", "Bowring", "0481765112"));
+
 	    testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
 	    testTicket.addCredit(100.0);
 	    
 	    
 	    ticket = new Ticket(UUID.randomUUID().toString(), 0, null);
+
 		  
 		System.out.println ("Welcome to the Pep-Pep Ticket Machine.");
 	    System.out.println ("Please select a command letter: ");

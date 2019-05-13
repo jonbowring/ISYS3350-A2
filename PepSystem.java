@@ -279,7 +279,7 @@ final class Ticket {
 	private String id;
 	private float credit;
 //	private Transaction history;
-//	private User user;
+  	private User user;
 	
 	/*
 	 * #############################################
@@ -287,11 +287,11 @@ final class Ticket {
 	 * #############################################
 	 * */
 	
-	public Ticket(String id, float credit/*, Transaction history, User user*/) {
+	public Ticket(String id, float credit/*, Transaction history*/, User user) {
 	  this.id = id;
 	  this.credit = credit;
 //	  this.history = history;
-//	  this.user = user;
+  	  this.user = user;
 	}
 	
 	
@@ -304,17 +304,12 @@ final class Ticket {
 		
 	}
 
-	private boolean validateCredit() {
-		if (credit > 100) {
+	public boolean validateCredit() {
+		if (credit > 100 || credit < 0) {
 			return false;
 		} else {
 			return true;
-		}
-	}
 
-	public void addCredit() {
-		if (validateCredit() == true) {
-			
 		}
 	}
 	
@@ -364,7 +359,10 @@ public class PepSystem {
 	  {
 	    // Variable declaration
 		HashMap<String, User> users = new HashMap<String, User>();
-		Ticket_JB ticket;
+
+		Ticket_JB testTicket;
+		Ticket ticket;
+
 		
 		/*
 		 * SHOULD WE HAVE A LOGIN SCREEN THAT GETS THE RELEVANT USER?
@@ -373,14 +371,19 @@ public class PepSystem {
 		// Initialise test
 		// TODO delete test initialisation
 		users.put("jbowring@informatica.com", new User("jbowring@informatica.com", "Jonathon", "Bowring", "0481765112"));
-	    ticket = new Ticket_JB(users.get("jbowring@informatica.com"));
-	    ticket.addCredit(100.0);
+
+	    testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
+	    testTicket.addCredit(100.0);
+	    
+	    
+	    ticket = new Ticket(UUID.randomUUID().toString(), 0, null);
+
 		  
 		System.out.println ("Welcome to the Pep-Pep Ticket Machine.");
 	    System.out.println ("Please select a command letter: ");
 	    System.out.println ("a: Purchase Pep-Pep Ticket");
 	    System.out.println ("b: Check credit balance");
-	    System.out.println ("c: Manage Pep-Pep Ticket");
+	    System.out.println ("c: Add credit to Pep-Pep Ticket");
 	    System.out.println ("d: Register User to Ticket");
 	    System.out.println ("e: Edit User");
 	    System.out.println ("f: View Travel History");
@@ -392,11 +395,19 @@ public class PepSystem {
 		switch (choice)
 			  {
 			  case "a":
-				ticket.buyPass("All day", "zone 1");
+				testTicket.buyPass("All day", "zone 1");
 			    break;
 			  case "b":System.out.println ("checkcredit.exe");
 			    break;
-			    case "c":System.out.println ("manage.exe");
+			    case "c":
+			    	if (ticket.validateCredit() == true) {
+						System.out.println ("How much credit would you like to add? (Multiples of 5 only!)");
+						int input = scan.nextInt ();
+						ticket.setCredit(input);
+						System.out.println ("$" + input + " added to your ticket ID = " + ticket.getId());
+					} else if(ticket.validateCredit() == false) {
+						System.out.println ("You currently hold $" + ticket.getCredit() + " credit, please spend your remaining credit or purchase a new ticket.");
+					}
 			    break;
 			  case "d":System.out.println ("register.exe");
 			    break;

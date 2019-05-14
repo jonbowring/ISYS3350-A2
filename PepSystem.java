@@ -1,65 +1,65 @@
 import java.util.*;
 
-//TODO DELETE THIS CLASS BEFORE SUBMISSION
-final class TestJB {
-	
-	  public TestJB() {
-		  
-		  //ticket.printHistory();
-	  }  
-  }
-  
-//TODO DELETE THIS CLASS BEFORE SUBMISSION
-final class Ticket_JB {
-
-	  private String id;
-	  private Double credit;
-	  private User user;
-	  private ArrayList<Transaction> history;
-
-	  public Ticket_JB(User user) {
-		  this.history = new ArrayList<Transaction>();
-		  this.id = UUID.randomUUID().toString();
-		  this.credit = 0.0;
-		  this.user = user;
-	  }
-	  
-	  public void buyPass(String duration, String zone) {
-		  Transaction tempTrans = new Transaction(duration, zone);
-		  if(validateCredit(tempTrans.getPass().getCost())) {
-			  history.add(tempTrans);
-			  System.out.println("Purchase of a " + duration + " " + zone + " pass was successful.");
-		  }
-		  else {
-			  System.out.println("Sorry, there is not enough credit to purchase a " + duration + " " + zone + " pass.");
-		  }
-	  }
-	  
-	  public void addCredit(Double credit) {
-		  this.credit = this.credit + credit;
-	  }
-	  
-	  public boolean validateCredit(Double cost) {
-		  if(this.credit >= cost) {
-			  return true;
-		  }
-		  else {
-			  return false;
-		  }
-	  }
-	  
-	  public void printHistory() {
-		  for(int i = 0; i < this.history.size(); i ++) {
-			  String id = this.history.get(i).getId();
-			  Date createdAt = this.history.get(i).getCreatedAt();
-			  String duration = this.history.get(i).getPass().getDuration();
-			  String zone = this.history.get(i).getPass().getZone();
-			  Double cost = this.history.get(i).getPass().getCost();
-			  System.out.printf("%s|%s|%s|%s|%f\n",id,createdAt,duration,zone,cost);
-		  }
-	  }
-
-	}
+////TODO DELETE THIS CLASS BEFORE SUBMISSION
+//final class TestJB {
+//	
+//	  public TestJB() {
+//		  
+//		  //ticket.printHistory();
+//	  }  
+//  }
+//  
+////TODO DELETE THIS CLASS BEFORE SUBMISSION
+//final class Ticket_JB {
+//
+//	  private String id;
+//	  private Double credit;
+//	  private User user;
+//	  private ArrayList<Transaction> history;
+//
+//	  public Ticket_JB(User user) {
+//		  this.history = new ArrayList<Transaction>();
+//		  this.id = UUID.randomUUID().toString();
+//		  this.credit = 0.0;
+//		  this.user = user;
+//	  }
+//	  
+//	  public void buyPass(String duration, String zone) {
+//		  Transaction tempTrans = new Transaction(duration, zone);
+//		  if(validateCredit(tempTrans.getPass().getCost())) {
+//			  history.add(tempTrans);
+//			  System.out.println("Purchase of a " + duration + " " + zone + " pass was successful.");
+//		  }
+//		  else {
+//			  System.out.println("Sorry, there is not enough credit to purchase a " + duration + " " + zone + " pass.");
+//		  }
+//	  }
+//	  
+//	  public void addCredit(Double credit) {
+//		  this.credit = this.credit + credit;
+//	  }
+//	  
+//	  public boolean validateCredit(Double cost) {
+//		  if(this.credit >= cost) {
+//			  return true;
+//		  }
+//		  else {
+//			  return false;
+//		  }
+//	  }
+//	  
+//	  public void printHistory() {
+//		  for(int i = 0; i < this.history.size(); i ++) {
+//			  String id = this.history.get(i).getId();
+//			  Date createdAt = this.history.get(i).getCreatedAt();
+//			  String duration = this.history.get(i).getPass().getDuration();
+//			  String zone = this.history.get(i).getPass().getZone();
+//			  Double cost = this.history.get(i).getPass().getCost();
+//			  System.out.printf("%s|%s|%s|%s|%f\n",id,createdAt,duration,zone,cost);
+//		  }
+//	  }
+//
+//	}
   
 final class Pass {
 		
@@ -69,8 +69,9 @@ final class Pass {
 	 * #############################################
 	 * */
   
-  private String id, duration, zone;
+	private String id, duration, zone;
 	private HashMap<String, Double> costs;
+	private Transaction transaction;
 	
 	/*
 	 * #############################################
@@ -116,6 +117,10 @@ final class Pass {
 		return this.costs.get(this.duration + ":" + this.zone);
 	}
 	
+	public Transaction getTransaction() {
+		return transaction;
+	}
+	
 	/*
 	 * #############################################
 	 * Set methods
@@ -133,6 +138,10 @@ final class Pass {
 	public void setZone(String zone) {
 		this.zone = zone;
 	}
+
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
 	
 	
 }
@@ -148,6 +157,7 @@ final class Transaction {
 	private String id;
 	private Date createdAt;
 	private Pass pass;
+	private Ticket ticket;
 	
 	/*
 	 * #############################################
@@ -155,10 +165,11 @@ final class Transaction {
 	 * #############################################
 	 * */
 	
-	public Transaction(String duration, String zone) {
+	public Transaction(String duration, String zone, Ticket ticket) {
 		this.id = UUID.randomUUID().toString();
 		this.createdAt = new Date();
 		this.pass = new Pass(duration, zone);
+		this.ticket = ticket;
 	}
 	
 	/*
@@ -179,6 +190,10 @@ final class Transaction {
 		return this.pass;
 	}
 	
+	public Ticket getTicket() {
+		return ticket;
+	}
+	
 	/*
 	 * #############################################
 	 * Set methods
@@ -195,6 +210,10 @@ final class Transaction {
 	
 	public void setPass(Pass pass) {
 		this.pass = pass;
+	}
+
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
 	}
 	
 }
@@ -278,8 +297,7 @@ final class Ticket {
 
 	private String id;
 	private float credit;
-//	private Transaction history;
-  	private User user;
+	private User user;
 	
 	/*
 	 * #############################################
@@ -287,21 +305,10 @@ final class Ticket {
 	 * #############################################
 	 * */
 	
-	public Ticket(String id, float credit/*, Transaction history*/, User user) {
-	  this.id = id;
-	  this.credit = credit;
-//	  this.history = history;
-  	  this.user = user;
-	}
-	
-	
-	
-	public void buyPass() {
-		
-	}
-	
-	public void printHistory() {
-		
+	public Ticket(float credit, User user) {
+		this.id = UUID.randomUUID().toString();
+		this.credit = credit;
+		this.user = user;
 	}
 
 	public boolean validateCredit() {
@@ -309,7 +316,6 @@ final class Ticket {
 			return false;
 		} else {
 			return true;
-
 		}
 	}
 	
@@ -335,21 +341,13 @@ final class Ticket {
 		this.credit = credit;
 	}
 
-//	public Transaction getHistory() {
-//		return history;
-//	}
-//
-//	public void setHistory(Transaction history) {
-//		this.history = history;
-//	}
-//
-//	public User getUser() {
-//		return user;
-//	}
-//
-//	public void setUser(User user) {
-//		this.user = user;
-//	}
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 }
 
@@ -359,10 +357,8 @@ public class PepSystem {
 	  {
 	    // Variable declaration
 		HashMap<String, User> users = new HashMap<String, User>();
-
-		Ticket_JB testTicket;
-		Ticket ticket;
-
+		//Ticket_JB testTicket;
+		Ticket ticket = new Ticket(0,null);
 		
 		/*
 		 * SHOULD WE HAVE A LOGIN SCREEN THAT GETS THE RELEVANT USER?
@@ -371,13 +367,9 @@ public class PepSystem {
 		// Initialise test
 		// TODO delete test initialisation
 		users.put("jbowring@informatica.com", new User("jbowring@informatica.com", "Jonathon", "Bowring", "0481765112"));
-
-	    testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
-	    testTicket.addCredit(100.0);
+	    //testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
+	    //testTicket.addCredit(100.0);
 	    
-	    
-	    ticket = new Ticket(UUID.randomUUID().toString(), 0, null);
-
 		  
 		System.out.println ("Welcome to the Pep-Pep Ticket Machine.");
 	    System.out.println ("Please select a command letter: ");
@@ -395,7 +387,7 @@ public class PepSystem {
 		switch (choice)
 			  {
 			  case "a":
-				testTicket.buyPass("All day", "zone 1");
+				//testTicket.buyPass("All day", "zone 1");
 			    break;
 			  case "b":System.out.println ("checkcredit.exe");
 			    break;
@@ -415,9 +407,9 @@ public class PepSystem {
 				  while(true) {
 					  System.out.println("Please enter the email address of the user to edit.");
 					  choice = scan.nextLine();
-					  User user = users.get(choice);
+					  User userSearch = users.get(choice);
 					  
-					  if(user == null) {
+					  if(userSearch == null) {
 						  System.out.println("Sorry, that is not a valid user email address. Please try again.");
 						  continue;
 					  }
@@ -432,23 +424,23 @@ public class PepSystem {
 					  case "a":
 						  System.out.println("Please enter the new first name:");
 						  choice = scan.nextLine();
-						  user.setFirstName(choice);
+						  userSearch.setFirstName(choice);
 						  System.out.println("Success!");
 						  break;
 					  case "b":
 						  System.out.println("Please enter the new last name:");
 						  choice = scan.nextLine();
-						  user.setLastName(choice);
+						  userSearch.setLastName(choice);
 						  System.out.println("Success!");
 						  break;
 					  case "c":
 						  System.out.println("Please enter the new phone number:");
 						  choice = scan.nextLine();
-						  user.setLastName(choice);
+						  userSearch.setLastName(choice);
 						  System.out.println("Success!");
 						  break;
 					  case "d":
-						  users.remove(user.getEmail());
+						  users.remove(userSearch.getEmail());
 						  System.out.println("Success!");
 						  break;
 					  }
@@ -457,8 +449,26 @@ public class PepSystem {
 				  }
 				  
 			    break;
-			  case "f":System.out.println ("travelhistory.exe");
-			    break;
+			  case "f":
+				  
+				  Ticket newTicket = new Ticket(0, users.get("jbowring@informatica.com"));
+				  
+				  ArrayList<Transaction> transactionArray = new ArrayList<Transaction>();
+				  transactionArray.add( new Transaction("All day", "Zone 1", newTicket) );
+				  transactionArray.add( new Transaction("All day", "Zone 2", newTicket) );
+				  transactionArray.add( new Transaction("All day", "Zone 1 & 2", newTicket) );
+				  
+				  for(int i = 0; i < transactionArray.size(); i ++) {
+					  String id = transactionArray.get(i).getId();
+					  Date createdAt = transactionArray.get(i).getCreatedAt();
+					  String duration = transactionArray.get(i).getPass().getDuration();
+					  String zone = transactionArray.get(i).getPass().getZone();
+					  Double cost = transactionArray.get(i).getPass().getCost();
+					  String user = transactionArray.get(i).getTicket().getUser().getEmail();
+					  System.out.printf("Transaction ID: %s | Created on: %s | Pass duration: %s | Zone: %s | Associated user: %s | Cost: %f\n",id,createdAt,duration,zone,user,cost);
+				  }
+				  
+				  break;
 			  default:System.
 			      out.println ("Incorrect input, please choose one form below ");
 			    System.out.println ("a: Purchase Pep-Pep Ticket");

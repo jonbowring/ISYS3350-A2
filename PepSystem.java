@@ -359,21 +359,26 @@ public class PepSystem {
 	  {
 	    // Variable declaration
 		HashMap<String, User> users = new HashMap<String, User>();
-
+		String email = "", emailConf = "", firstName = "", lastName = "", phone = "";
 		Ticket_JB testTicket;
 		Ticket ticket;
-
+		String choice = null;
+	    Scanner scan = new Scanner (System.in);
+	    User currUser;
 		
-		/*
-		 * SHOULD WE HAVE A LOGIN SCREEN THAT GETS THE RELEVANT USER?
-		 */
+		// Create the administrator user
+		users.put("admin@admin.com", new User("admin@admin.com", "Admin", "Admin", ""));
 		
-		// Initialise test
-		// TODO delete test initialisation
-		users.put("jbowring@informatica.com", new User("jbowring@informatica.com", "Jonathon", "Bowring", "0481765112"));
+		System.out.println ("Please enter your email address to login (admin users can login using 'admin@admin.com'): ");
+		choice = scan.nextLine();
+		currUser = users.get(choice);
+		if(currUser == null) {
+			System.out.println("Sorry, you have entered an invalid user name. Goodbye.");
+			System.exit(0);
+		}
 
-	    testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
-	    testTicket.addCredit(100.0);
+	    //testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
+	    //testTicket.addCredit(100.0);
 	    
 	    
 	    ticket = new Ticket(UUID.randomUUID().toString(), 0, null);
@@ -387,15 +392,17 @@ public class PepSystem {
 	    System.out.println ("d: Register User to Ticket");
 	    System.out.println ("e: Edit User");
 	    System.out.println ("f: View Travel History");
+	    if(currUser.getEmail().equals("admin@admin.com")) {
+	    	System.out.println ("g: Register New User");
+	    }
 	    System.out.println ("q: Quit");
-	    String choice = null;
-	    Scanner scan = new Scanner (System.in);
+	    
 	      {
 		choice = scan.nextLine ();
 		switch (choice)
 			  {
 			  case "a":
-				testTicket.buyPass("All day", "zone 1");
+				//testTicket.buyPass("All day", "zone 1");
 			    break;
 			  case "b":System.out.println ("checkcredit.exe");
 			    break;
@@ -412,6 +419,7 @@ public class PepSystem {
 			  case "d":System.out.println ("register.exe");
 			    break;
 			  case "e":
+				  
 				  while(true) {
 					  System.out.println("Please enter the email address of the user to edit.");
 					  choice = scan.nextLine();
@@ -459,6 +467,30 @@ public class PepSystem {
 			    break;
 			  case "f":System.out.println ("travelhistory.exe");
 			    break;
+			  case "g":
+				  if(!currUser.getEmail().equals("admin@admin.com")) {
+				    	break;
+				    }
+				  email = getMandatoryValue("Please new users email address:");
+				  emailConf = getMandatoryValue("Please confirm the new users email address:");
+				  
+				  if(!email.equals(emailConf)) {
+					  System.out.println("Sorry, the email addresses do not match.");
+					  break;
+				  }
+				  
+				  firstName = getMandatoryValue("Please new users first name:");
+				  lastName = getMandatoryValue("Please new users last name:");
+				  phone = getMandatoryValue("Please new users phone number:");
+				  ;
+				  if(users.put(email, new User(email, firstName, lastName, phone)) == null) {
+					  System.out.println("SUCCESS: A new user has been created for " + email);
+				  }
+				  else {
+					  System.out.println("ERROR: Something went wrong creating a user for " + email);
+				  }
+				  
+			    break;
 			  default:System.
 			      out.println ("Incorrect input, please choose one form below ");
 			    System.out.println ("a: Purchase Pep-Pep Ticket");
@@ -467,6 +499,7 @@ public class PepSystem {
 			    System.out.println ("d: Register User to Ticket");
 			    System.out.println ("e: Edit User");
 			    System.out.println ("f: View Travel History");
+			    System.out.println ("g: Register New User");
 			    System.out.println ("q: Quit");
 			    break;
 			  case "q":
@@ -476,5 +509,23 @@ public class PepSystem {
 			  }
 	      }
 	      
+	  }
+	  
+	  public static String getMandatoryValue(String msg) {
+		  Scanner scan = new Scanner (System.in);
+		  String choice = "";
+		  
+		  while(true) {
+			  System.out.println(msg);
+			  choice = scan.nextLine();
+			  
+			  if(choice.equals("") || choice == null) {
+				  continue;
+			  }
+			  
+			  break;
+		  }
+		  
+		  return choice;
 	  }
 }

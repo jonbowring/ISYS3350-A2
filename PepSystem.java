@@ -1,15 +1,7 @@
 import java.util.*;
-
-//TODO DELETE THIS CLASS BEFORE SUBMISSION
-final class TestJB {
-	
-	  public TestJB() {
-		  
-		  //ticket.printHistory();
-	  }  
-  }
   
 //TODO DELETE THIS CLASS BEFORE SUBMISSION
+/*
 final class Ticket_JB {
 
 	  private String id;
@@ -60,6 +52,7 @@ final class Ticket_JB {
 	  }
 
 	}
+	*/
   
 final class Pass {
 		
@@ -277,35 +270,36 @@ final class Ticket {
 	 * */
 
 	private String id;
-	private float credit;
-//	private Transaction history;
-  	private User user;
-	
-	/*
-	 * #############################################
-	 * Constructors
-	 * #############################################
-	 * */
-	
-	public Ticket(String id, float credit/*, Transaction history*/, User user) {
-	  this.id = id;
-	  this.credit = credit;
-//	  this.history = history;
-  	  this.user = user;
-	}
-	
-	
-	
-	public void buyPass() {
-		
-	}
+	  private Double credit;
+	  private User user;
+	  private ArrayList<Transaction> history;
+
+	  public Ticket(User user) {
+		  this.history = new ArrayList<Transaction>();
+		  this.id = UUID.randomUUID().toString();
+		  this.credit = 0.0;
+		  this.user = user;
+	  }
+	  
+	  public void buyPass(String duration, String zone) {
+		  Transaction tempTrans = new Transaction(duration, zone);
+		  Double cost = tempTrans.getPass().getCost();
+		  if(checkCredit(cost)) {
+			  history.add(tempTrans);
+			  this.credit -= cost; 
+			  System.out.println("Purchase of a " + duration + " " + zone + " pass was successful.");
+		  }
+		  else {
+			  System.out.println("Sorry, there is not enough credit to purchase a " + duration + " " + zone + " pass.");
+		  }
+	  }
 	
 	public void printHistory() {
 		
 	}
 
-	public boolean validateCredit() {
-		if (credit > 100 || credit < 0) {
+	public boolean validateCredit(int credit) {
+		if (credit > 100 || credit < 0 || credit % 5 != 0) {
 			return false;
 		} else {
 			return true;
@@ -327,12 +321,12 @@ final class Ticket {
 		this.id = id;
 	}
 
-	public float getCredit() {
+	public Double getCredit() {
 		return credit;
 	}
 
-	public void setCredit(float credit) {
-		this.credit = credit;
+	public void setCredit(int credit) {
+		this.credit = Double.valueOf(credit);
 	}
 
 //	public Transaction getHistory() {
@@ -350,6 +344,15 @@ final class Ticket {
 //	public void setUser(User user) {
 //		this.user = user;
 //	}
+	
+	public boolean checkCredit(Double cost) {
+		  if(this.credit >= cost) {
+			  return true;
+		  }
+		  else {
+			  return false;
+		  }
+	  }
 
 }
 
@@ -359,16 +362,18 @@ public class PepSystem {
 	  {
 	    // Variable declaration
 		HashMap<String, User> users = new HashMap<String, User>();
+		HashMap<String, Ticket>tickets = new HashMap<String, Ticket>();
 		String email = "", emailConf = "", firstName = "", lastName = "", phone = "";
-		Ticket_JB testTicket;
-		Ticket ticket;
+		Ticket ticket = null;
 		String choice = null;
 	    Scanner scan = new Scanner (System.in);
 	    User currUser;
 		
-		// Create the administrator user
+		// Initialise the users
 		users.put("admin@admin.com", new User("admin@admin.com", "Admin", "Admin", ""));
+		users.put("test@test.com", new User("test@test.com", "Test", "Er", "0299998888"));
 		
+		// Print the login screen
 		System.out.println ("Please enter your email address to login (admin users can login using 'admin@admin.com'): ");
 		choice = scan.nextLine();
 		currUser = users.get(choice);
@@ -377,96 +382,201 @@ public class PepSystem {
 			System.exit(0);
 		}
 
-	    //testTicket = new Ticket_JB(users.get("jbowring@informatica.com"));
-	    //testTicket.addCredit(100.0);
-	    
-	    
-	    ticket = new Ticket(UUID.randomUUID().toString(), 0, null);
-
 		  
-		System.out.println ("Welcome to the Pep-Pep Ticket Machine.");
-	    System.out.println ("Please select a command letter: ");
-	    System.out.println ("a: Purchase Pep-Pep Ticket");
-	    System.out.println ("b: Check credit balance");
-	    System.out.println ("c: Add credit to Pep-Pep Ticket");
-	    System.out.println ("d: Register User to Ticket");
-	    System.out.println ("e: Edit User");
-	    System.out.println ("f: View Travel History");
-	    if(currUser.getEmail().equals("admin@admin.com")) {
-	    	System.out.println ("g: Register New User");
-	    }
-	    System.out.println ("q: Quit");
+		
 	    
-	      {
-		choice = scan.nextLine ();
-		switch (choice)
+	    while(true) {
+		
+	    	System.out.println("\nWelcome to the Pep-Pep Ticket Machine.");
+		    System.out.println("Please select a command letter: ");
+		    System.out.println("a: Purchase Pep-Pep Ticket");
+		    System.out.println("b: Check credit balance");
+		    System.out.println("c: Add credit to Pep-Pep Ticket");
+		    System.out.println("d: Edit User");
+		    System.out.println("e: View Travel History");
+		    System.out.println("f: Buy Travel Pass");
+		    if(currUser.getEmail().equals("admin@admin.com")) {
+		    	System.out.println ("g: Register New User");
+		    }
+		    System.out.println("q: Quit");
+	    	
+	    	choice = scan.nextLine();
+		
+	    	switch(choice)
 			  {
 			  case "a":
-				//testTicket.buyPass("All day", "zone 1");
-			    break;
-			  case "b":System.out.println ("checkcredit.exe");
-			    break;
-			    case "c":
-			    	if (ticket.validateCredit() == true) {
-						System.out.println ("How much credit would you like to add? (Multiples of 5 only!)");
-						int input = scan.nextInt ();
-						ticket.setCredit(input);
-						System.out.println ("$" + input + " added to your ticket ID = " + ticket.getId());
-					} else if(ticket.validateCredit() == false) {
-						System.out.println ("You currently hold $" + ticket.getCredit() + " credit, please spend your remaining credit or purchase a new ticket.");
-					}
-			    break;
-			  case "d":System.out.println ("register.exe");
-			    break;
-			  case "e":
 				  
 				  while(true) {
-					  System.out.println("Please enter the email address of the user to edit.");
+					  Boolean next = true;
+					  System.out.println("The cost of a new ticket is $8, are you sure that you want to proceed (Y/N)?: ");
 					  choice = scan.nextLine();
-					  User user = users.get(choice);
-					  
-					  if(user == null) {
-						  System.out.println("Sorry, that is not a valid user email address. Please try again.");
-						  continue;
-					  }
-					  
-					  System.out.println("a: Edit first name");
-					  System.out.println("b: Edit last name");
-					  System.out.println("c: Edit phone number");
-					  System.out.println("d: Delete user");
-					  choice = scan.nextLine();
+					  choice = choice.toLowerCase();
 					  
 					  switch(choice) {
-					  case "a":
-						  System.out.println("Please enter the new first name:");
+					  case "y":
+						  tickets.put(currUser.getEmail(), new Ticket(currUser));
+						  System.out.println("You have successfully bought ticket id " + tickets.get(currUser.getEmail()) + " with $0 credit");
+						  break;
+					  case "n":
+						  System.out.println("Purchase cancelled.");
+						  break;
+					  default:
+						  System.out.println("Sorry, '" + choice + "' is not a valid option. Please try again.");
+						  next = false;
+						  break;
+					  }
+					  
+					  if(next) {
+						  break;
+					  }
+					  
+				  }
+				  
+			    break;
+			  case "b":
+				  ticket = tickets.get(currUser.getEmail());
+				  if(ticket == null) {
+					  System.out.println("You currently do not have a ticket. Please first purchase a ticket.");
+				  }
+				  else {
+					  Double availCredit = ticket.getCredit();
+					  System.out.println("Available credit is: " + availCredit);
+				  }
+				  
+			      break;
+			    case "c":
+			    	ticket = tickets.get(currUser.getEmail());
+			    	if(ticket == null) {
+			    		System.out.println("You currently do not have a ticket. Please first purchase a ticket.");
+			    	}
+			    	else {
+			    		System.out.println("How much credit would you like to add? (Multiples of 5 only!)");
+						int input = scan.nextInt();
+			    		if (ticket.validateCredit(input) == true) {
+							ticket.setCredit(input);
+							System.out.println("$" + input + " added to your ticket ID = " + ticket.getId());
+						} else {
+							System.out.println("You currently hold $" + ticket.getCredit() + " credit, please spend your remaining credit or purchase a new ticket.");
+						}
+			    		scan.nextLine(); //This consumes the newline character missed by nextInt, which was causing issues with the next menu selection
+			    	}
+			    	
+			    break;
+			  case "d":
+				  
+				  User editUser = null;
+				  
+				  while(true) {
+					  
+					  if(currUser.getEmail().equals("admin@admin.com")) {
+						  System.out.println("Please enter the email address of the user to edit.");
 						  choice = scan.nextLine();
-						  user.setFirstName(choice);
-						  System.out.println("Success!");
-						  break;
-					  case "b":
-						  System.out.println("Please enter the new last name:");
-						  choice = scan.nextLine();
-						  user.setLastName(choice);
-						  System.out.println("Success!");
-						  break;
-					  case "c":
-						  System.out.println("Please enter the new phone number:");
-						  choice = scan.nextLine();
-						  user.setLastName(choice);
-						  System.out.println("Success!");
-						  break;
-					  case "d":
-						  users.remove(user.getEmail());
-						  System.out.println("Success!");
-						  break;
+						  editUser = users.get(choice);
+						  
+						  if(editUser == null) {
+							  System.out.println("Sorry, that is not a valid user email address. Please try again.");
+							  continue;
+						  }
+					  }
+					  else {
+						  editUser = currUser;
 					  }
 					  
 					  break;
 				  }
 				  
+				  System.out.println("a: Edit first name");
+				  System.out.println("b: Edit last name");
+				  System.out.println("c: Edit phone number");
+				  System.out.println("d: Delete user");
+				  choice = scan.nextLine();
+				  
+				  switch(choice) {
+				  case "a":
+					  System.out.println("Please enter the new first name:");
+					  choice = scan.nextLine();
+					  editUser.setFirstName(choice);
+					  System.out.println("Success!");
+					  break;
+				  case "b":
+					  System.out.println("Please enter the new last name:");
+					  choice = scan.nextLine();
+					  editUser.setLastName(choice);
+					  System.out.println("Success!");
+					  break;
+				  case "c":
+					  System.out.println("Please enter the new phone number:");
+					  choice = scan.nextLine();
+					  editUser.setLastName(choice);
+					  System.out.println("Success!");
+					  break;
+				  case "d":
+					  users.remove(editUser.getEmail());
+					  System.out.println("Success!");
+					  break;
+				  }
+				  
 			    break;
-			  case "f":System.out.println ("travelhistory.exe");
+			  case "e":System.out.println("travelhistory.exe");
 			    break;
+			  case "f":
+				  String duration = "", zone = "";
+				  Boolean validChoice = true;
+				  ticket = tickets.get(currUser.getEmail());
+				  
+				  if(ticket == null) {
+					  System.out.println("You currently do not have a ticket. Please first purchase a ticket.");
+				  }
+				  else {
+					  while(true) {
+						  System.out.println("Please select the duration by choosing one of the below options (1 or 2):");
+						  System.out.println("1) 2 hour");
+						  System.out.println("2) All day");
+						  choice = scan.nextLine();
+						  switch(choice) {
+						  case "1":
+							  duration = "2 hour";
+							  break;
+						  case "2":
+							  duration = "All day";
+							  break;
+						  default:
+							  System.out.println("Please make a valid selection.");
+							  validChoice = false;
+						  }
+						  
+						  if(validChoice) {
+							  break;
+						  }
+					  }
+					  
+					  while(true) {
+						  System.out.println("Please select the zone by choosing one of the below options (1 or 2):");
+						  System.out.println("1) zone 1");
+						  System.out.println("2) zones 1 & 2");
+						  choice = scan.nextLine();
+						  switch(choice) {
+						  case "1":
+							  zone = "zone 1";
+							  break;
+						  case "2":
+							  zone = "zones 1 & 2";
+							  break;
+						  default:
+							  System.out.println("Please make a valid selection.");
+							  validChoice = false;
+						  }
+						  
+						  if(validChoice) {
+							  break;
+						  }
+					  }
+					  
+					  ticket.buyPass(duration,  zone);
+				  }
+				  
+				  
+				  break;
 			  case "g":
 				  if(!currUser.getEmail().equals("admin@admin.com")) {
 				    	break;
@@ -491,28 +601,21 @@ public class PepSystem {
 				  }
 				  
 			    break;
-			  default:System.
-			      out.println ("Incorrect input, please choose one form below ");
-			    System.out.println ("a: Purchase Pep-Pep Ticket");
-			    System.out.println ("b: Check credit balance");
-			    System.out.println ("c: Manage Pep-Pep Ticket");
-			    System.out.println ("d: Register User to Ticket");
-			    System.out.println ("e: Edit User");
-			    System.out.println ("f: View Travel History");
-			    System.out.println ("g: Register New User");
-			    System.out.println ("q: Quit");
+			  default:
+				  System.out.println("Incorrect input, please choose one form below ");
 			    break;
 			  case "q":
-			    System.out.println ("Thank you for using the Pep-Pep Ticket Machine");
-			    System.out.println ("This session is now closed");
+			    System.out.println("\nThank you for using the Pep-Pep Ticket Machine");
+			    System.out.println("This session is now closed");
 			    scan.close();
+			    System.exit(0);
 			  }
 	      }
 	      
 	  }
 	  
 	  public static String getMandatoryValue(String msg) {
-		  Scanner scan = new Scanner (System.in);
+		  Scanner scan = new Scanner(System.in);
 		  String choice = "";
 		  
 		  while(true) {

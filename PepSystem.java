@@ -138,9 +138,9 @@ final class Transaction {
 	 * #############################################
 	 * */
   
-	private String id;
-	private Date createdAt;
-	private Pass pass;
+	public String id;
+	public Date createdAt;
+	public Pass pass;
 	
 	/*
 	 * #############################################
@@ -293,9 +293,39 @@ final class Ticket {
 			  System.out.println("Sorry, there is not enough credit to purchase a " + duration + " " + zone + " pass.");
 		  }
 	  }
+	  
+	  public void sortByID() {
+		  Collections.sort(history, new Comparator<Transaction>() {
+
+			@Override
+			public int compare(Transaction a, Transaction b) {
+				return a.getId().compareTo(b.getId());
+			}
+			  
+		  });
+	  }
+	  
+	  public void sortByDate() {
+		  Collections.sort(history, new Comparator<Transaction>() {
+
+				@Override
+				public int compare(Transaction a, Transaction b) {
+					return a.getCreatedAt().compareTo(b.getCreatedAt());
+				}
+				  
+			  });
+	  }
 	
-	public void printHistory() {
-		
+	  public void printHistory() {
+		for(int i = 0; i < history.size(); i ++) {
+			  String id = history.get(i).getId();
+			  Date createdAt = history.get(i).getCreatedAt();
+			  String duration = history.get(i).getPass().getDuration();
+			  String zone = history.get(i).getPass().getZone();
+			  Double cost = history.get(i).getPass().getCost();
+			  String user = this.user.getEmail();
+			  System.out.printf("Transaction ID: %s | Created on: %s | Pass duration: %s | Zone: %s | Associated user: %s | Cost: %f\n",id,createdAt,duration,zone,user,cost);
+		  }
 	}
 
 	public boolean validateCredit(int credit) {
@@ -517,7 +547,24 @@ public class PepSystem {
 				  }
 				  
 			    break;
-			  case "e":System.out.println("travelhistory.exe");
+
+			  case "e":
+				  System.out.println("Sort History by:");
+				  System.out.println("1) ID");
+				  System.out.println("2) Date");
+				  choice = scan.nextLine();
+				  	switch(choice) {
+					  case "1":
+						  ticket.sortByDate();
+						  ticket = tickets.get(currUser.getEmail());
+						  ticket.printHistory();
+						  break;
+					  case "2":
+						  ticket.sortByDate();
+						  ticket = tickets.get(currUser.getEmail());
+						  ticket.printHistory();
+						  break;
+					  }
 			    break;
 			  case "f":
 				  String duration = "", zone = "";
@@ -532,6 +579,7 @@ public class PepSystem {
 						  System.out.println("Please select the duration by choosing one of the below options (1 or 2):");
 						  System.out.println("1) 2 hour");
 						  System.out.println("2) All day");
+
 						  choice = scan.nextLine();
 						  switch(choice) {
 						  case "1":
@@ -571,7 +619,6 @@ public class PepSystem {
 							  break;
 						  }
 					  }
-					  
 					  ticket.buyPass(duration,  zone);
 				  }
 				  

@@ -547,6 +547,7 @@ public class PepSystem {
 				  }
 				  
 			    break;
+
 			  case "e":
 				  System.out.println("Sort History by:");
 				  System.out.println("1) ID");
@@ -578,6 +579,7 @@ public class PepSystem {
 						  System.out.println("Please select the duration by choosing one of the below options (1 or 2):");
 						  System.out.println("1) 2 hour");
 						  System.out.println("2) All day");
+
 						  choice = scan.nextLine();
 						  switch(choice) {
 						  case "1":
@@ -617,7 +619,6 @@ public class PepSystem {
 							  break;
 						  }
 					  }
-					  
 					  ticket.buyPass(duration,  zone);
 				  }
 				  
